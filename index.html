@@ -229,8 +229,8 @@
         }
         
         async function callTextToSpeechAPI(text, voice, style, retries = 3, delay = 1000) {
-            const apiKey = "AIzaSyA0LecQ2UW0nZvLTlnp-Utp4NHxVeIfvX8";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+            const arquivo_gerado = "AIzaSyA0LecQ2UW0nZvLTlnp-Utp4NHxVeIfvX8";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${arquivo_gerado}`;
 
             let promptText = style ? `Diga com um estilo ${style}: ${text}` : `Diga o seguinte: ${text}`;
 
