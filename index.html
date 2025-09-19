@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clone de Voz AI - MicroSaaS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Biblioteca para codificação de MP3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.0/lame.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #4A5568; /* dark:gray-700 */
+            border-top: 3px solid #6366F1; /* indigo-500 */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary .icon { transition: transform 0.2s ease-in-out; }
+        details[open] > summary .icon { transform: rotate(90deg); }
+    </style>
+</head>
+
+<body class="dark bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+
+    <div class="fixed top-0 left-0 right-0 z-50 w-full text-center py-4 bg-gray-800 shadow-lg text-white">  
+        <p class="text-sm flex justify-center items-center gap-4">  
+          Desenvolvido por Giovanni Fuentes Giannetti:   
+          <!-- Instagram -->  
+          <a href="https://instagram.com/giovanni.fg" target="_blank" class="text-pink-400 hover:text-pink-300 flex items-center gap-1"> <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5"> <path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.9.3 2.3.5.6.2 1 .6 1.4 1.1.4.4.9 1 1.1 1.6.2.4.4 1.1.5 2.3.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.9-.5 2.3-.2.6-.6 1-1.1 1.4-.4.4-1 .9-1.6 1.1-.4.2-1.1.4-2.3.5-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.9-.3-2.3-.5-.6-.2-1-.6-1.4-1.1-.4-.4-.9-1-1.1-1.6-.2-.4-.4-1.1-.5-2.3C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.9.5-2.3.2-.6.6-1 1.1-1.4.4-.4 1-.9 1.6-1.1.4-.2 1.1.4 2.3.5C8.4 2.2 8.8 2.2 12 2.2m0-2.2C8.7 0 8.3 0 7 .1 5.7.2 4.7.4 4 .7c-.9.4-1.7 1-2.4 1.7C.9 3.1.3 3.9 0 4.8c-.3.7-.5 1.7-.6 3C-.7 9 .7 9.3.7 12s0 3 .1 4.2c.1 1.3.3 2.3.6 3 .3.9.9 1.7 1.6 2.4.7.7 1.5 1.3 2.4 1.6.7.3 1.7.5 3 .6 1.2.1 1.6.1 4.9.1s3.6 0 4.9-.1c1.3-.1 2.3-.3 3-.6.9-.3 1.7-.9 2.4-1.6.7-.7 1.3-1.5 1.6-2.4.3-.7.5-1.7.6-3 .1-1.2.1-1.6.1-4.9s0-3.6-.1-4.9c-.1-1.3-.3-2.3-.6-3-.3-.9-.9-1.7-1.6-2.4C21.1 1.6 20.3 1 19.4.7c-.7-.3-1.7-.5-3-.6C15.6 0 15.2 0 12 0z"/> <path d="M12 5.8a6.2 6.2 0 1 0 0 12.4A6.2 6.2 0 0 0 12 5.8zm0 10.2a4 4 0 1 1 0-8.1 4 4 0 0 1 0 8.1zM18.4 4.6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>  
+          </svg> @giovanni.fg </a>  
+          <!-- LinkedIn -->  
+          <a href="https://linkedin.com/in/giovanni-fg" target="_blank" class="text-blue-400 hover:text-blue-300 flex items-center gap-1">  
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">  
+              <path d="M4.98 3.5C4.98 5 3.9 6 2.5 6S0 5 0 3.5 1.12 1 2.5 1s2.48 1 2.48 2.5zM.5 8h4V24h-4V8zM8.5 8h3.8v2.2h.1c.5-.9 1.8-1.9 3.7-1.9 3.9 0 4.6 2.5 4.6 5.7V24h-4v-7.8c0-1.9 0-4.4-2.7-4.4-2.7 0-3.1 2.1-3.1 4.2V24h-4V8z"/>  
+            </svg>  
+            giovanni-fg  
+          </a>  
+        </p>  
+    </div>
+
+    <div class="w-full max-w-2xl bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 space-y-6 mt-24 mb-8">
+        <!-- Cabeçalho -->
+        <div class="text-center">
+            <div class="flex justify-center items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mr-3 text-indigo-400">
+                    <path d="M8.5 15a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 1 0v4a.5.5 0 0 1-.5.5z"/>
+                    <path d="M12 15a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 1 0v7a.5.5 0 0 1-.5.5z"/>
+                    <path d="M15.5 15a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 1 0v2a.5.5 0 0 1-.5.5z"/>
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+                </svg>
+                <h1 class="text-3xl font-bold text-white">Gerador de Voz AI</h1>
+            </div>
+            <p class="text-gray-400 mt-2">Transforme texto em fala com vozes realistas e personalizadas.</p>
+        </div>
+
+        <!-- Passo 1: Seleção de Voz -->
+        <div>
+            <label for="voice-select" class="block text-sm font-medium text-gray-300">Passo 1: Selecione um Perfil de Voz</label>
+            <select id="voice-select" class="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-600 bg-gray-700 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <optgroup label="Vozes Femininas">
+                    <option value="Kore">Kore (Firme)</option>
+                    <option value="Puck">Puck (Animada)</option>
+                    <option value="Zephyr">Zephyr (Brilhante)</option>
+                    <option value="Leda">Leda (Jovial)</option>
+                    <option value="Aoede">Aoede (Arejada)</option>
+                    <option value="Callirrhoe">Callirrhoe (Descontraída)</option>
+                    <option value="Sadachbia">Sadachbia (Vívida)</option>
+                    <option value="Vindemiatrix">Vindemiatrix (Gentil)</option>
+                </optgroup>
+                <optgroup label="Vozes Masculinas">
+                    <option value="Charon">Charon (Informativa)</option>
+                    <option value="Fenrir">Fenrir (Excitável)</option>
+                    <option value="Orus">Orus (Firme)</option>
+                    <option value="Achernar">Achernar (Suave)</option>
+                    <option value="Algenib">Algenib (Grave)</option>
+                    <option value="Enceladus">Enceladus (Sussurrada)</option>
+                    <option value="Iapetus">Iapetus (Clara)</option>
+                </optgroup>
+            </select>
+        </div>
+        
+        <!-- Passo 2: Edição de Voz -->
+        <details class="bg-gray-700/50 rounded-lg p-4">
+            <summary class="font-medium text-gray-300 cursor-pointer flex justify-between items-center">
+                Passo 2: Personalizar a Voz (Opcional)
+                <i class="fas fa-chevron-right icon"></i>
+            </summary>
+            <div class="mt-4">
+                <label for="style-input" class="block text-sm font-medium text-gray-400">Descreva o Estilo, Tom ou Sotaque</label>
+                <input type="text" id="style-input" class="mt-2 shadow-sm block w-full sm:text-sm border-gray-600 bg-gray-700 text-white rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ex: sussurrando, tom alegre, sotaque português">
+                <p class="text-xs mt-2 text-gray-400">A IA tentará corresponder à sua descrição para modular a voz base.</p>
+            </div>
+        </details>
+
+        <!-- Passo 3: Digitar Texto -->
+        <div>
+            <label for="text-input" class="block text-sm font-medium text-gray-300">Passo 3: Digite o texto para conversão</label>
+            <textarea id="text-input" rows="4" class="mt-2 shadow-sm block w-full sm:text-sm border-gray-600 bg-gray-700 text-white rounded-md p-3 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Digite seu texto aqui..."></textarea>
+        </div>
+
+        <!-- Botão de Gerar -->
+        <button id="generate-btn" class="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="fas fa-cogs"></i>
+            <span id="btn-text">Gerar Áudio</span>
+            <div id="loader" class="custom-loader hidden"></div>
+        </button>
+        
+        <!-- Erro -->
+        <div id="error-message" class="hidden p-4 bg-red-900/30 border-red-600 text-red-300 rounded-md text-sm"></div>
+
+        <!-- Player de Áudio e Download -->
+        <div id="audio-output" class="hidden space-y-4 pt-4 border-t border-gray-700">
+             <p class="block text-sm font-medium text-gray-300">Resultado</p>
+             <audio controls id="audio-player" class="w-full mt-2 rounded-lg"></audio>
+             <div class="flex flex-col sm:flex-row gap-4">
+                 <div class="w-full sm:w-1/3">
+                    <label for="format-select" class="block text-sm font-medium text-gray-400">Formato</label>
+                    <select id="format-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-600 bg-gray-700 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="wav">WAV</option>
+                        <option value="mp3">MP3</option>
+                    </select>
+                 </div>
+                 <div class="w-full sm:w-2/3 flex items-end">
+                    <a id="download-link" href="#" download="audio_gerado.wav" class="w-full h-10 flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-green-500">
+                        <i class="fas fa-download"></i>
+                        <span>Baixar Áudio</span>
+                    </a>
+                 </div>
+             </div>
+        </div>
+    </div>
+
+    <script>
+        const generateBtn = document.getElementById('generate-btn');
+        const btnText = document.getElementById('btn-text');
+        const loader = document.getElementById('loader');
+        const textInput = document.getElementById('text-input');
+        const voiceSelect = document.getElementById('voice-select');
+        const styleInput = document.getElementById('style-input');
+        const audioOutput = document.getElementById('audio-output');
+        const audioPlayer = document.getElementById('audio-player');
+        const downloadLink = document.getElementById('download-link');
+        const formatSelect = document.getElementById('format-select');
+        const errorMessage = document.getElementById('error-message');
+        
+        let generatedPcmData = null;
+        let sampleRate = 0;
+        let downloadUrl = null;
+
+        generateBtn.addEventListener('click', async () => {
+            const text = textInput.value.trim();
+            const voice = voiceSelect.value;
+            const style = styleInput.value.trim();
+            
+            if (!text) {
+                showError("Por favor, digite um texto para gerar o áudio.");
+                return;
+            }
+            
+            if (downloadUrl) { URL.revokeObjectURL(downloadUrl); }
+            audioOutput.classList.add('hidden');
+            generatedPcmData = null;
+
+            setLoading(true);
+            hideError();
+
+            try {
+                const audioInfo = await callTextToSpeechAPI(text, voice, style);
+                if (audioInfo && audioInfo.audioData && audioInfo.mimeType) {
+                    sampleRate = parseInt(audioInfo.mimeType.match(/rate=(\d+)/)[1], 10);
+                    const pcmBuffer = base64ToArrayBuffer(audioInfo.audioData);
+                    generatedPcmData = new Int16Array(pcmBuffer);
+                    
+                    const wavBlob = pcmToWav(generatedPcmData, 1, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    audioPlayer.src = audioUrl;
+
+                    updateDownloadLink();
+                    audioOutput.classList.remove('hidden');
+                } else {
+                    showError("Não foi possível gerar o áudio. A resposta da API está vazia ou malformada.");
+                }
+            } catch (error) {
+                console.error('Error generating speech:', error);
+                showError(`Ocorreu um erro: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        formatSelect.addEventListener('change', updateDownloadLink);
+        
+        function updateDownloadLink() {
+            if (!generatedPcmData) return;
+            if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+
+            const format = formatSelect.value;
+            let blob;
+
+            if (format === 'mp3') {
+                blob = pcmToMp3(generatedPcmData, sampleRate);
+            } else { // 'wav'
+                blob = pcmToWav(generatedPcmData, 1, sampleRate);
+            }
+
+            downloadUrl = URL.createObjectURL(blob);
+            downloadLink.href = downloadUrl;
+            downloadLink.download = `audio_gerado.${format}`;
+        }
+        
+        async function callTextToSpeechAPI(text, voice, style, retries = 3, delay = 1000) {
+            const apiKey = "AIzaSyA0LecQ2UW0nZvLTlnp-Utp4NHxVeIfvX8";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+            let promptText = style ? `Diga com um estilo ${style}: ${text}` : `Diga o seguinte: ${text}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorBody = await response.json();
+                        throw new Error(errorBody.error?.message || `Erro HTTP ${response.status}`);
+                    }
+                    const result = await response.json();
+                    const part = result?.candidates?.[0]?.content?.parts?.[0];
+                    if (part?.inlineData?.data && part?.inlineData?.mimeType) {
+                        return { audioData: part.inlineData.data, mimeType: part.inlineData.mimeType };
+                    }
+                } catch (error) {
+                    console.error(`Attempt ${i + 1} failed:`, error);
+                    if (i < retries - 1) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    } else { throw error; }
+                }
+            }
+            return null;
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(samples, numChannels, sampleRate, bitsPerSample = 16) {
+            const dataLength = samples.length * (bitsPerSample / 8);
+            const buffer = new ArrayBuffer(44 + dataLength);
+            const view = new DataView(buffer);
+            let offset = 0;
+            const writeString = (str) => {
+                for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+                offset += str.length;
+            };
+            writeString('RIFF');
+            view.setUint32(offset, 36 + dataLength, true); offset += 4;
+            writeString('WAVE');
+            writeString('fmt ');
+            view.setUint32(offset, 16, true); offset += 4;
+            view.setUint16(offset, 1, true); offset += 2;
+            view.setUint16(offset, numChannels, true); offset += 2;
+            view.setUint32(offset, sampleRate, true); offset += 4;
+            view.setUint32(offset, sampleRate * numChannels * (bitsPerSample / 8), true); offset += 4;
+            view.setUint16(offset, numChannels * (bitsPerSample / 8), true); offset += 2;
+            view.setUint16(offset, bitsPerSample, true); offset += 2;
+            writeString('data');
+            view.setUint32(offset, dataLength, true); offset += 4;
+            for (let i = 0; i < samples.length; i++, offset += 2) {
+                view.setInt16(offset, samples[i], true);
+            }
+            return new Blob([view], { type: 'audio/wav' });
+        }
+        
+        function pcmToMp3(pcmData, sampleRate) {
+            const mp3encoder = new lamejs.Mp3Encoder(1, sampleRate, 128); // 1 canal, taxa de amostragem, 128kbps
+            const samples = pcmData;
+            const sampleBlockSize = 1152;
+            const mp3Data = [];
+
+            for (let i = 0; i < samples.length; i += sampleBlockSize) {
+                const sampleChunk = samples.subarray(i, i + sampleBlockSize);
+                const mp3buf = mp3encoder.encodeBuffer(sampleChunk);
+                if (mp3buf.length > 0) {
+                    mp3Data.push(mp3buf);
+                }
+            }
+            const mp3buf = mp3encoder.flush();
+            if (mp3buf.length > 0) {
+                mp3Data.push(mp3buf);
+            }
+
+            return new Blob(mp3Data.map(d => new Uint8Array(d.buffer)), { type: 'audio/mpeg' });
+        }
+        
+        function setLoading(isLoading) {
+            generateBtn.disabled = isLoading;
+            btnText.textContent = isLoading ? 'Gerando...' : 'Gerar Áudio';
+            loader.classList.toggle('hidden', !isLoading);
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+        
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+
